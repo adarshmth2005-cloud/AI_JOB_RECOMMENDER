@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react'
+import API_BASE_URL from './api'
 
 function Dashboard() {
   const [stats, setStats] = useState({
@@ -13,7 +14,7 @@ function Dashboard() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/dashboard/stats')
+    fetch(`${API_BASE_URL}/api/dashboard/stats`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Unable to load dashboard statistics')

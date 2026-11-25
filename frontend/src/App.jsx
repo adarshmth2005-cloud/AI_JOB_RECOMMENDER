@@ -6,8 +6,9 @@ import Dashboard from './Dashboard'
 import ResumeUpload from './ResumeUpload'
 import ResumeAnalysis from './ResumeAnalysis'
 import JobRecommendations from './JobRecommendations'
+import API_BASE_URL from './api'
 
-const API = 'http://127.0.0.1:5000'
+const API = API_BASE_URL
 
 function App() {
   const [token, setToken] = useState(

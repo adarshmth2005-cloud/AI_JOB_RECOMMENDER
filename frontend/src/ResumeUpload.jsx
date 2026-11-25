@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react'
+import API_BASE_URL from './api'
 
 function ResumeUpload() {
   const [file, setFile] = useState(null)
@@ -33,7 +34,7 @@ function ResumeUpload() {
       setMessage('Uploading resume...')
 
       const response = await fetch(
-        'http://127.0.0.1:5000/api/resumes/upload',
+        `${API_BASE_URL}/api/resumes/upload`,
         {
           method: 'POST',
           body: formData
@@ -97,4 +98,3 @@ function ResumeUpload() {
 }
 
 export default ResumeUpload
-

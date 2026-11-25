@@ -1,7 +1,8 @@
 
 import { useEffect, useRef, useState } from "react";
+import API_BASE_URL from "./api";
 
-const API = "http://127.0.0.1:5000";
+const API = API_BASE_URL;
 
 function ResumeAnalysis() {
   const [resumes, setResumes] = useState([]);
@@ -21,7 +22,6 @@ function ResumeAnalysis() {
   const [pdfAvailable, setPdfAvailable] = useState(false);
   const [pdfChecked, setPdfChecked] = useState(false);
 
-  // Job selection and skills comparison
   const [jobs, setJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState("");
   const [skillComparison, setSkillComparison] = useState(null);
@@ -31,7 +31,6 @@ function ResumeAnalysis() {
 
   const loadingRef = useRef(false);
 
-  // Load resumes from backend
   const loadResumes = async (reset = false, searchValue = search) => {
     if (loadingRef.current) return;
 
@@ -60,9 +59,7 @@ function ResumeAnalysis() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Resumes load nahi ho sake."
-        );
+        throw new Error(data.message || "Resumes load nahi ho sake.");
       }
 
       const newResumes = data.resumes || [];
@@ -73,9 +70,7 @@ function ResumeAnalysis() {
         const combined = [...previous, ...newResumes];
 
         return Array.from(
-          new Map(
-            combined.map((resume) => [resume.id, resume])
-          ).values()
+          new Map(combined.map((resume) => [resume.id, resume])).values()
         );
       });
 
@@ -97,21 +92,15 @@ function ResumeAnalysis() {
     }
   };
 
-  // Load jobs from backend
   const loadJobs = async () => {
     setLoadingJobs(true);
 
     try {
-      const response = await fetch(
-        `${API}/api/jobs/?limit=100`
-      );
-
+      const response = await fetch(`${API}/api/jobs/?limit=100`);
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Jobs load nahi ho sake."
-        );
+        throw new Error(data.message || "Jobs load nahi ho sake.");
       }
 
       setJobs(data.jobs || []);
@@ -122,24 +111,20 @@ function ResumeAnalysis() {
     }
   };
 
-  // Load jobs when component opens
   useEffect(() => {
     loadJobs();
   }, []);
 
-  // Select Resume button
   const handleShowList = () => {
     setShowList(true);
     loadResumes(true, search);
   };
 
-  // Search directly from backend
   const handleSearch = (value) => {
     setSearch(value);
     setShowList(true);
   };
 
-  // Search after user stops typing
   useEffect(() => {
     if (!showList) return;
 
@@ -150,7 +135,6 @@ function ResumeAnalysis() {
     return () => clearTimeout(timer);
   }, [search, showList]);
 
-  // Select resume and get analysis
   const handleSelectResume = async (resumeId) => {
     setSelectedId(resumeId);
     setAnalysis(null);
@@ -172,14 +156,11 @@ function ResumeAnalysis() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Resume analysis nahi mil saka."
-        );
+        throw new Error(data.message || "Resume analysis nahi mil saka.");
       }
 
       setAnalysis(data.analysis || data);
 
-      // Check whether PDF is available
       const pdfResponse = await fetch(
         `${API}/api/resumes/${resumeId}/file`,
         { method: "GET" }
@@ -198,7 +179,6 @@ function ResumeAnalysis() {
     }
   };
 
-  // Compare resume skills with selected job
   const handleCompareSkills = async () => {
     if (!selectedId) {
       setComparisonMessage("Please select a resume first.");
@@ -222,9 +202,7 @@ function ResumeAnalysis() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || "Skills comparison nahi ho saka."
-        );
+        throw new Error(data.message || "Skills comparison nahi ho saka.");
       }
 
       setSkillComparison(data);
@@ -235,7 +213,6 @@ function ResumeAnalysis() {
     }
   };
 
-  // Hide search list
   const handleClearSearch = () => {
     setSearch("");
     setShowList(false);
@@ -254,7 +231,6 @@ function ResumeAnalysis() {
         skills aur PDF dekhein.
       </p>
 
-      {/* Search section */}
       <div style={{ marginTop: "20px", marginBottom: "20px" }}>
         <label
           htmlFor="resume-search"
@@ -282,10 +258,7 @@ function ResumeAnalysis() {
           <button
             type="button"
             onClick={handleShowList}
-            style={{
-              padding: "12px 18px",
-              cursor: "pointer",
-            }}
+            style={{ padding: "12px 18px", cursor: "pointer" }}
           >
             Select Resume
           </button>
@@ -307,12 +280,9 @@ function ResumeAnalysis() {
       </div>
 
       {message && (
-        <p style={{ color: "red", margin: "12px 0" }}>
-          {message}
-        </p>
+        <p style={{ color: "red", margin: "12px 0" }}>{message}</p>
       )}
 
-      {/* Resume list */}
       {showList && (
         <div
           style={{
@@ -347,20 +317,12 @@ function ResumeAnalysis() {
                 borderRadius: "6px",
                 cursor: "pointer",
                 background:
-                  String(selectedId) === String(resume.id)
-                    ? "#e8f0fe"
-                    : "#fff",
+                  String(selectedId) === String(resume.id) ? "#e8f0fe" : "#fff",
               }}
             >
-              <strong>
-                {resume.filename || `Resume ${resume.id}`}
-              </strong>
-
+              <strong>{resume.filename || `Resume ${resume.id}`}</strong>
               <p>ID: {resume.id}</p>
-
-              <p>
-                Category: {resume.category || "Not classified"}
-              </p>
+              <p>Category: {resume.category || "Not classified"}</p>
             </div>
           ))}
 
@@ -381,7 +343,6 @@ function ResumeAnalysis() {
         </div>
       )}
 
-      {/* Analysis section */}
       {loadingAnalysis && <p>Analyzing resume...</p>}
 
       {analysis && (
@@ -393,18 +354,14 @@ function ResumeAnalysis() {
           </p>
 
           <p>
-            <strong>Category:</strong>{" "}
-            {analysis.category || "Not classified"}
+            <strong>Category:</strong> {analysis.category || "Not classified"}
           </p>
 
           <p>
-            <strong>Text Length:</strong>{" "}
-            {analysis.text_length || 0}
+            <strong>Text Length:</strong> {analysis.text_length || 0}
           </p>
 
-          <h4 style={{ marginTop: "15px" }}>
-            Extracted Skills
-          </h4>
+          <h4 style={{ marginTop: "15px" }}>Extracted Skills</h4>
 
           {analysis.skills && analysis.skills.length > 0 ? (
             <div style={{ marginTop: "8px" }}>
@@ -429,7 +386,6 @@ function ResumeAnalysis() {
             <p>No skills found.</p>
           )}
 
-          {/* Job skills comparison */}
           <div
             style={{
               marginTop: "25px",
@@ -481,24 +437,16 @@ function ResumeAnalysis() {
             </select>
 
             {loadingJobs && <p>Loading jobs...</p>}
-
-            {!loadingJobs && jobs.length === 0 && (
-              <p>No jobs available.</p>
-            )}
+            {!loadingJobs && jobs.length === 0 && <p>No jobs available.</p>}
 
             <div style={{ marginTop: "15px" }}>
               <button
                 type="button"
                 onClick={handleCompareSkills}
                 disabled={loadingComparison || !selectedJobId}
-                style={{
-                  padding: "11px 18px",
-                  cursor: "pointer",
-                }}
+                style={{ padding: "11px 18px", cursor: "pointer" }}
               >
-                {loadingComparison
-                  ? "Comparing..."
-                  : "Compare Skills"}
+                {loadingComparison ? "Comparing..." : "Compare Skills"}
               </button>
             </div>
 
@@ -514,51 +462,45 @@ function ResumeAnalysis() {
 
                 {skillComparison.matched_skills?.length > 0 ? (
                   <div style={{ marginTop: "8px" }}>
-                    {skillComparison.matched_skills.map(
-                      (skill, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            display: "inline-block",
-                            padding: "7px 11px",
-                            margin: "4px",
-                            background: "#dcfce7",
-                            color: "#166534",
-                            borderRadius: "15px",
-                          }}
-                        >
-                          {skill}
-                        </span>
-                      )
-                    )}
+                    {skillComparison.matched_skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          display: "inline-block",
+                          padding: "7px 11px",
+                          margin: "4px",
+                          background: "#dcfce7",
+                          color: "#166534",
+                          borderRadius: "15px",
+                        }}
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 ) : (
                   <p>No matched skills found.</p>
                 )}
 
-                <h4 style={{ marginTop: "20px" }}>
-                  Missing Skills
-                </h4>
+                <h4 style={{ marginTop: "20px" }}>Missing Skills</h4>
 
                 {skillComparison.missing_skills?.length > 0 ? (
                   <div style={{ marginTop: "8px" }}>
-                    {skillComparison.missing_skills.map(
-                      (skill, index) => (
-                        <span
-                          key={index}
-                          style={{
-                            display: "inline-block",
-                            padding: "7px 11px",
-                            margin: "4px",
-                            background: "#fee2e2",
-                            color: "#991b1b",
-                            borderRadius: "15px",
-                          }}
-                        >
-                          {skill}
-                        </span>
-                      )
-                    )}
+                    {skillComparison.missing_skills.map((skill, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          display: "inline-block",
+                          padding: "7px 11px",
+                          margin: "4px",
+                          background: "#fee2e2",
+                          color: "#991b1b",
+                          borderRadius: "15px",
+                        }}
+                      >
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 ) : (
                   <p>No missing skills found.</p>
@@ -567,9 +509,7 @@ function ResumeAnalysis() {
             )}
           </div>
 
-          <h4 style={{ marginTop: "20px" }}>
-            Extracted Resume Text
-          </h4>
+          <h4 style={{ marginTop: "20px" }}>Extracted Resume Text</h4>
 
           <div
             style={{
@@ -582,13 +522,10 @@ function ResumeAnalysis() {
               marginTop: "8px",
             }}
           >
-            {analysis.extracted_text ||
-              "No extracted text available."}
+            {analysis.extracted_text || "No extracted text available."}
           </div>
 
-          <h3 style={{ marginTop: "25px" }}>
-            Resume PDF
-          </h3>
+          <h3 style={{ marginTop: "25px" }}>Resume PDF</h3>
 
           {pdfChecked && pdfAvailable && (
             <iframe
@@ -606,9 +543,8 @@ function ResumeAnalysis() {
 
           {pdfChecked && !pdfAvailable && (
             <p style={{ marginTop: "10px" }}>
-              Original PDF Not Available. Is resume ka text
-              database mein available hai, lekin original PDF
-              file server par nahi mili.
+              Original PDF Not Available. Is resume ka text database mein
+              available hai, lekin original PDF file server par nahi mili.
             </p>
           )}
         </div>

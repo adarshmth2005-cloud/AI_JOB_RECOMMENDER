@@ -1,7 +1,8 @@
 
 import { useEffect, useRef, useState } from 'react'
+import API_BASE_URL from './api'
 
-const API = 'http://127.0.0.1:5000/api'
+const API = `${API_BASE_URL}/api`
 const JOBS_PER_PAGE = 50
 
 function JobRecommendations() {
