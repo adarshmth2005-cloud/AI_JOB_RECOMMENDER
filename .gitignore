@@ -1,0 +1,24 @@
+
+# Python
+venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+
+# React
+node_modules/
+dist/
+
+# Local files and secrets
+*.log
+.DS_Store
+.env.*
+!.env.example
+
+# Uploaded resumes and local data
+uploads/
+instance/
+
+archive/
+archive (1)/
