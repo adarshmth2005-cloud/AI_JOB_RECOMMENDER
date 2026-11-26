@@ -22,3 +22,6 @@ instance/
 
 archive/
 archive (1)/
+
+# Aiven database certificate
+backend/ca.pem
